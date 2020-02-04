@@ -3,11 +3,6 @@
     "license": "MIT",
     "name": "debricked/shared",
     "description": "Contains shared components used in Debricked projects.",
-    "keywords": [
-        "vulnerability",
-        "vulnerability-management",
-        "dependency-management"
-    ],
     "authors": [
         {
             "name": "Oscar Reimer",
@@ -24,7 +19,6 @@
         "symfony/http-client": "^4.3|^5.0",
         "symfony/http-foundation": "^4.3|^5.0"
     },
-    "minimum-stability": "beta",
     "prefer-stable": true,
     "config": {
         "preferred-install": {
