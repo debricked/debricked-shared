@@ -1,0 +1,79 @@
+{
+    "type": "library",
+    "license": "MIT",
+    "name": "debricked/shared",
+    "description": "Contains shared components used in Debricked projects.",
+    "keywords": [
+        "vulnerability",
+        "vulnerability-management",
+        "dependency-management"
+    ],
+    "authors": [
+        {
+            "name": "Oscar Reimer",
+            "email": "oscar.reimer@debricked.com",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "email": "sales@debricked.com",
+        "issues": "https://github.com/debricked/debricked-shared/issues"
+    },
+    "require": {
+        "php": "^7.2.5",
+        "symfony/http-client": "^4.3|^5.0",
+        "symfony/http-foundation": "^4.3|^5.0"
+    },
+    "minimum-stability": "beta",
+    "prefer-stable": true,
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true,
+        "platform": {
+            "php": "7.2.5"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "paragonie/random_compat": "2.*",
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php71": "*",
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php56": "*"
+    },
+    "scripts": {
+        "auto-scripts": {},
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "^4.3.0"
+        }
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "phpstan/phpstan": "^0.12.2",
+        "phpstan/phpstan-phpunit": "^0.12.0",
+        "phpstan/phpstan-symfony": "^0.12.1",
+        "symfony/phpunit-bridge": "^4.3.0",
+        "symfony/test-pack": "^1.0"
+    }
+}
