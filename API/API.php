@@ -8,7 +8,7 @@
  * file that was distributed with this source code (usually found in the root of this application).
  */
 
-namespace App\API;
+namespace Debricked\Shared\API;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
