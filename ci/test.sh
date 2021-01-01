@@ -12,6 +12,6 @@ echo $PWD
 echo "Install Composer with dev dependencies"
 composer install
 
-vendor/bin/phpstan analyse API/ --level=7
+vendor/bin/phpstan analyse API/
 
 vendor/bin/php-cs-fixer fix --config=.php_cs.dist -v --dry-run --stop-on-violation --diff --using-cache=no

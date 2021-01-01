@@ -39,13 +39,23 @@ class API
     /**
      * @var string
      */
+    private $apiVersion;
+
+    /**
+     * @var string
+     */
     private $token;
 
-    public function __construct(HttpClientInterface $debrickedClient, string $username, string $password)
-    {
+    public function __construct(
+        HttpClientInterface $debrickedClient,
+        string $username,
+        string $password,
+        string $apiVersion = ''
+    ) {
         $this->debrickedClient = $debrickedClient;
         $this->password = $password;
         $this->username = $username;
+        $this->apiVersion = $apiVersion;
     }
 
     /* @noinspection PhpDocMissingThrowsInspection */
@@ -69,7 +79,7 @@ class API
         try {
             $response = $this->debrickedClient->request(
                 $method,
-                $uri,
+                "{$this->apiVersion}{$uri}",
                 \array_merge_recursive(
                     [
                         'headers' => [
@@ -85,7 +95,8 @@ class API
                 /* @noinspection PhpUnhandledExceptionInspection */
                 $this->token = $this->getNewToken();
                 $response = $this->makeApiCall($method, $uri, $options, $attempt + 1);
-            } else {
+            }
+            else {
                 throw $e;
             }
         }
@@ -116,11 +127,15 @@ class API
         );
         $tokenResponse = \json_decode($response->getContent(), true);
         if ($tokenResponse === null) {
-            throw new \Exception('Empty response received from server when token expected. Body: '.$response->getContent());
-        } else {
+            throw new \Exception(
+                'Empty response received from server when token expected. Body: '.$response->getContent()
+            );
+        }
+        else {
             if (\array_key_exists('token', $tokenResponse)) {
                 return $tokenResponse['token'];
-            } else {
+            }
+            else {
                 throw new \Exception('No token received from server. Response: '.\implode(', ', $tokenResponse));
             }
         }
