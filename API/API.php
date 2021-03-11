@@ -27,14 +27,19 @@ class API
     private $debrickedClient;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $password;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $username;
+
+    /**
+     * @var string|null
+     */
+    private $accessToken;
 
     /**
      * @var string
@@ -46,6 +51,14 @@ class API
      */
     private $token;
 
+    /**
+     * API constructor.
+     *
+     * @param HttpClientInterface $debrickedClient HTTP client
+     * @param string              $username        Username. Leave empty if you use an access token.
+     * @param string              $password        Password, or access token
+     * @param string              $apiVersion      API version
+     */
     public function __construct(
         HttpClientInterface $debrickedClient,
         string $username,
@@ -53,9 +66,17 @@ class API
         string $apiVersion = ''
     ) {
         $this->debrickedClient = $debrickedClient;
-        $this->password = $password;
-        $this->username = $username;
         $this->apiVersion = $apiVersion;
+
+        if (empty($username)) {
+            $this->username = null;
+            $this->password = null;
+            $this->accessToken = $password;
+        } else {
+            $this->password = $password;
+            $this->username = $username;
+            $this->accessToken = null;
+        }
     }
 
     /* @noinspection PhpDocMissingThrowsInspection */
@@ -95,8 +116,7 @@ class API
                 /* @noinspection PhpUnhandledExceptionInspection */
                 $this->token = $this->getNewToken();
                 $response = $this->makeApiCall($method, $uri, $options, $attempt + 1);
-            }
-            else {
+            } else {
                 throw $e;
             }
         }
@@ -105,7 +125,7 @@ class API
     }
 
     /**
-     * Returns a new token using path "/api/login_check".
+     * Returns a new token using either username/password or access token.
      *
      * @throws TransportExceptionInterface
      * @throws ClientExceptionInterface
@@ -115,27 +135,33 @@ class API
      */
     private function getNewToken(): string
     {
+        if ($this->accessToken !== null) {
+            $url = '/api/login_refresh';
+            $body = [
+                'refresh_token' => $this->accessToken,
+            ];
+        } else {
+            $url = '/api/login_check';
+            $body = [
+                '_username' => $this->username,
+                '_password' => $this->password,
+            ];
+        }
+
         $response = $this->debrickedClient->request(
             Request::METHOD_POST,
-            '/api/login_check',
+            $url,
             [
-                'json' => [
-                    '_username' => $this->username,
-                    '_password' => $this->password,
-                ],
+                'json' => $body,
             ]
         );
         $tokenResponse = \json_decode($response->getContent(), true);
         if ($tokenResponse === null) {
-            throw new \Exception(
-                'Empty response received from server when token expected. Body: '.$response->getContent()
-            );
-        }
-        else {
+            throw new \Exception('Empty response received from server when token expected. Body: '.$response->getContent());
+        } else {
             if (\array_key_exists('token', $tokenResponse)) {
                 return $tokenResponse['token'];
-            }
-            else {
+            } else {
                 throw new \Exception('No token received from server. Response: '.\implode(', ', $tokenResponse));
             }
         }
